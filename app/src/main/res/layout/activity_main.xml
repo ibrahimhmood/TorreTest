@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/defaultBackground"
+    tools:context=".MainActivity"
+    android:gravity="center"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/profile_picture"
+        android:layout_width="270dp"
+        android:layout_height="207dp"
+        android:layout_gravity="center"
+        android:text="torre"
+        android:textColor="@android:color/white"
+        android:textSize="15pt"
+        android:gravity="center"
+        android:textStyle="bold
+"
+        />
+    <RelativeLayout
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:orientation="vertical"
+        android:background="@drawable/main_page_box"
+        >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:id="@+id/search"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@null"
+            android:textColorHint="@android:color/white"
+            android:hint="Search for people or jobs"
+            />
+    </RelativeLayout>
+</LinearLayout>
