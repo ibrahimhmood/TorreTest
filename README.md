@@ -5,7 +5,7 @@ A sample application showing the importance of simplistic, fluid UIs.
 ![Main activity](/images/home.png)
 ![Search results](/images/results.png)
 
-#Changes
+# Changes
 1. Added simple main layout with a simple search and logo
 2. Made the layout more fluid and removed ImageView logo in favor of TextView
 3. Made some cosmetic changes to the textbox. The hint is now no longer white, it's light grey and blends in with the whole interface.
