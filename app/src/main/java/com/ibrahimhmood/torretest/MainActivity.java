@@ -2,6 +2,7 @@ package com.ibrahimhmood.torretest;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.hardware.input.InputManager;
 import android.inputmethodservice.InputMethodService;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,6 +16,7 @@ import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,46 +30,44 @@ public class MainActivity extends AppCompatActivity
     protected LinearLayout main;
     protected TextView logo;
     protected RelativeLayout searchBox;
+    protected ListView searchResultsList;
     boolean animatedUp = false;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Get the searchbox containing search editor
+        searchBox = findViewById(R.id.search_box);
         //Get the main page
         main = findViewById(R.id.main_page);
         //Get teh search box
         search = findViewById(R.id.search);
-
+        //Get the results pager
+        searchResultsList = findViewById(R.id.results_list);
         //listen for touches on search box
-        search.setOnTouchListener(new View.OnTouchListener()
+        search.addTextChangedListener(new TextWatcher()
         {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent)
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
             {
-                //Move up
-                moveUpward();
-                return false;
-            }
-        });
 
-        //listen for the same on main page
-        main.setOnTouchListener(new View.OnTouchListener()
-        {
+            }
+
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent)
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
             {
-                //Move up
-                moveDownward();
-                return false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable)
+            {
             }
         });
     }
 
     public void moveUpward()
     {
-        //Get the searchbox containing search editor
-        searchBox = findViewById(R.id.search_box);
         //Get the logo
         logo = findViewById(R.id.logo);
         //Load the animation
@@ -86,10 +86,6 @@ public class MainActivity extends AppCompatActivity
         //Check if we have already animated up
         if(animatedUp)
         {
-            //No more focus on search
-            search.clearFocus();
-            //Hide the keyboard
-            ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
             //Get the search box
             searchBox = findViewById(R.id.search_box);
             //Get the logo

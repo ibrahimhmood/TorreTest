@@ -24,24 +24,38 @@
         />
     <RelativeLayout
         android:id="@+id/search_box"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:orientation="vertical"
         android:background="@drawable/main_page_box"
+        android:gravity="center"
         >
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:minHeight="50dp"
+            android:maxHeight="80dp"
             android:id="@+id/search"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="@null"
-            android:textColorHint="@android:color/white"
+            android:textColorHint="@android:color/darker_gray"
+            android:textColor="@android:color/white"
             android:hint="Search for people or jobs"
             android:imeOptions="actionSearch"
             />
     </RelativeLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/results_list"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/search_box_background"
+        />
 </LinearLayout>
