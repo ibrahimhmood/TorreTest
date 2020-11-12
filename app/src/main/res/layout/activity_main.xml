@@ -38,6 +38,7 @@
             android:inputType="textMultiLine"
             android:minHeight="50dp"
             android:maxHeight="80dp"
+            android:singleLine="true"
             android:id="@+id/search"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
@@ -50,12 +51,14 @@
             android:imeOptions="actionSearch"
             />
     </RelativeLayout>
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <GridView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:verticalSpacing="10dp"
         android:visibility="gone"
         android:id="@+id/results_list"
         android:layout_marginTop="20dp"
         android:background="@drawable/search_box_background"
+        android:scrollbarStyle="@null"
         />
 </LinearLayout>

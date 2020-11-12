@@ -1,35 +1,32 @@
 package com.ibrahimhmood.torretest;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.hardware.input.InputManager;
-import android.inputmethodservice.InputMethodService;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethod;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ListAdapter;
+import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.ibrahimhmood.torretest.adapters.PeopleSearchAdapter;
 import com.ibrahimhmood.torretest.net.HttpRequest;
 import com.ibrahimhmood.torretest.net.OnResponseReceivedListener;
 
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -37,8 +34,8 @@ public class MainActivity extends AppCompatActivity
     protected LinearLayout main;
     protected TextView logo;
     protected RelativeLayout searchBox;
-    protected ListView searchResultsList;
-    boolean animatedUp = false;
+    protected GridView searchResultsList;
+    protected HttpRequest peopleSearch;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -54,6 +51,32 @@ public class MainActivity extends AppCompatActivity
         search = findViewById(R.id.search);
         //Get the results pager
         searchResultsList = findViewById(R.id.results_list);
+        //Send the text over to the website for people search
+        peopleSearch = new HttpRequest(new OnResponseReceivedListener()
+        {
+            @Override
+            public void onResponseReceived(Object response)
+            {
+                try
+                {
+                    //Parse the response as JSON
+                    JSONObject jsonResponse = new JSONObject(response.toString());
+                    JSONArray result = jsonResponse.getJSONArray("results");
+                    searchResultsList.setAdapter(new PeopleSearchAdapter(getApplicationContext(), result));
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onErrorReceived(String error)
+            {
+                Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+            }
+        }, "application/json");
         //listen for touches on search box
         search.addTextChangedListener(new TextWatcher()
         {
@@ -72,63 +95,46 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void afterTextChanged(Editable editable)
             {
+                //Create a name value pair list
+                List<BasicNameValuePair> pairs = new ArrayList<>();
+                //Add query to list
+                pairs.add(new BasicNameValuePair("name", editable.toString()));
+                //Search for people
+                peopleSearch.post(HttpRequest.PEOPLE_SEARCH, pairs);
+                //Check if editable is nothing
+                if(editable.toString().isEmpty())
+                    //Hide the results
+                    searchResultsList.setVisibility(View.GONE);
+                else
+                {
+                    //Show the results list
+                    searchResultsList.setVisibility(View.VISIBLE);
+                }
             }
         });
-        Map<String, String> data = new HashMap<>();
-        data.put("q", "Hi");
-        try
+
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener()
         {
-            new HttpRequest.Post(this, new OnResponseReceivedListener()
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent)
             {
-                @Override
-                public void onResponseReceived(Object response)
+                //Create a name value pair list
+                List<BasicNameValuePair> pairs = new ArrayList<>();
+                //Add query to list
+                pairs.add(new BasicNameValuePair("name", search.getText().toString()));
+                //Search for people
+                peopleSearch.post(HttpRequest.PEOPLE_SEARCH, pairs);
+                //Check if editable is nothing
+                if(search.getText().toString().isEmpty())
+                    //Hide the results
+                    searchResultsList.setVisibility(View.GONE);
+                else
                 {
-                    Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                    //Show the results list
+                    searchResultsList.setVisibility(View.VISIBLE);
                 }
-
-                @Override
-                public void onErrorReceived(VolleyError error)
-                {
-                    new AlertDialog.Builder(MainActivity.this).setMessage(new String(error.networkResponse.data)).create().show();
-                }
-            })
-                    .post(String.format(HttpRequest.PEOPLE_SEARCH, "Ibrahim"), data);
-        } catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public void moveUpward()
-    {
-        //Load the animation
-        Animation toTop = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.drag_up);
-        //Animate the logo up
-        logo.startAnimation(toTop);
-        //Animate the search box up
-        searchBox.startAnimation(toTop);
-        //We have animated upwards
-        animatedUp = true;
-    }
-
-    public void moveDownward()
-    {
-
-        //Check if we have already animated up
-        if(animatedUp)
-        {
-            //Get the search box
-            searchBox = findViewById(R.id.search_box);
-            //Get the logo
-            logo = findViewById(R.id.logo);
-            //Load the downward animation
-            Animation toBottom = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.move_down);
-            //Animate the search box first
-            searchBox.startAnimation(toBottom);
-            //Then the logo
-            logo.startAnimation(toBottom);
-            //And reset animatedUp
-            animatedUp = false;
-        }
+                return false;
+            }
+        });
     }
 }

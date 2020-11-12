@@ -5,4 +5,5 @@
     <color name="colorAccent">#282828</color>
     <color name="defaultBackground">#282828</color>
     <color name="lighterBtn">#383838</color>
+    <color name="evenLighterColor">#484848</color>
 </resources>
