@@ -1,5 +1,6 @@
 package com.ibrahimhmood.torretest;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.hardware.input.InputManager;
@@ -21,8 +22,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.ibrahimhmood.torretest.net.HttpRequest;
 import com.ibrahimhmood.torretest.net.OnResponseReceivedListener;
+
+import org.json.JSONException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -37,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Get the logo
+        logo = findViewById(R.id.logo);
         //Get the searchbox containing search editor
         searchBox = findViewById(R.id.search_box);
         //Get the main page
@@ -57,6 +66,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
             {
+
             }
 
             @Override
@@ -64,12 +74,33 @@ public class MainActivity extends AppCompatActivity
             {
             }
         });
+        Map<String, String> data = new HashMap<>();
+        data.put("q", "Hi");
+        try
+        {
+            new HttpRequest.Post(this, new OnResponseReceivedListener()
+            {
+                @Override
+                public void onResponseReceived(Object response)
+                {
+                    Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onErrorReceived(VolleyError error)
+                {
+                    new AlertDialog.Builder(MainActivity.this).setMessage(new String(error.networkResponse.data)).create().show();
+                }
+            })
+                    .post(String.format(HttpRequest.PEOPLE_SEARCH, "Ibrahim"), data);
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void moveUpward()
     {
-        //Get the logo
-        logo = findViewById(R.id.logo);
         //Load the animation
         Animation toTop = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.drag_up);
         //Animate the logo up
